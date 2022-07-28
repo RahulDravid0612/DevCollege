@@ -23,8 +23,8 @@ public class StudentIdGenerator implements IdentifierGenerator {
             ResultSet rs = statement.executeQuery("select count(student_id) as Id from Student");
 
             if (rs.next()) {
-                int id = rs.getInt(1) + 0001;
-                String generatedId = prefix + new Integer(id).toString();
+                String id = String.valueOf(rs.getInt(1) + 0001);
+                String generatedId = prefix + id;
                 return generatedId;
             }
         } catch (SQLException e) {
