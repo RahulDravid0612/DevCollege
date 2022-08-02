@@ -12,6 +12,8 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class CourseRequest {
 
+
+
     private String courseId;
     @NotNull(message = "courseName shouldn't be null")
     private String courseName;

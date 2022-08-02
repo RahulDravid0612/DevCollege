@@ -23,9 +23,15 @@ public class CourseIdGenerator implements IdentifierGenerator {
             ResultSet rs = statement.executeQuery("select count(course_id) as Id from Course");
 
             if (rs.next()) {
-                String id = (String.valueOf(rs.getInt(1) + 0001));
-                String generatedId = prefix + id;
-                return generatedId;
+                if(rs.getInt(1)<9) {
+                    String id =(String.format("%03d", 0)+(rs.getInt(1)+1));
+                    String generatedId = prefix + id;
+                    return generatedId;
+                }else {
+                    String id = (String.format("%02d", 0)+(rs.getInt(1)+1));
+                    String generatedId = prefix + id;
+                    return generatedId;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

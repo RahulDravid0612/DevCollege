@@ -1,4 +1,4 @@
-package com.DevCollege.advice;
+package com.DevCollege.Handler;
 
 import com.DevCollege.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;

@@ -9,13 +9,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
+import java.util.Date;
 
-
+@Entity
 @Data
 @AllArgsConstructor(staticName = "build")
 @NoArgsConstructor
-@Entity
 public class Enrolment {
     @Id
     @GenericGenerator(name = "enrolment_id",strategy = "com.DevCollege.Generator.EnrolmentIdGenerator")
@@ -24,13 +23,12 @@ public class Enrolment {
     )
     @Column(name = "enrolment_id")
     private String enrolmentId;
-    @Column(name = "student_id")
-    private String studentId;
-    @Column(name = "course_id")
-    private String courseID;
-    private LocalDateTime courseStart;
-    private LocalDateTime courseEnd;
+    private Date courseStart;
+    private Date courseEnd;
     private  String status;
+    private String student_id;
+    private String course_id;
+
 
 
 }

@@ -3,12 +3,11 @@ package com.DevCollege.Controller;
 import com.DevCollege.DTO.CourseRequest;
 import com.DevCollege.Entity.Course;
 import com.DevCollege.Repository.CourseRepository;
-import com.DevCollege.Service.CourseService;
+import com.DevCollege.ServiceImpl.CourseServiceImpl;
 import com.DevCollege.exception.UserNotFoundException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,9 +19,11 @@ import java.util.Map;
 public class CourseController {
 
     @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
     private CourseRepository courseRepository;
     @Autowired
-    private CourseService courseService;
+    private CourseServiceImpl courseService;
 
     //Get All course List
     @GetMapping("/getAll")
@@ -33,12 +34,13 @@ public class CourseController {
     //Add course By course ID
     @PostMapping("/addCourse")
     public Map<String, String> saveCourse(@Valid @RequestBody CourseRequest courseRequest){
-        return courseService.addCourse(courseRequest);
+        Course course = modelMapper.map(courseRequest, Course.class);
+        return courseService.addCourse(course);
     }
 
 
     //update course by course ID
-    @PostMapping("/courseUpdate/{courseId}")
+    @PutMapping("/courseUpdate/{courseId}")
     public Map<String, String> updateCourseByCourseId(@RequestBody CourseRequest courseRequest, @PathVariable String courseId) throws UserNotFoundException {
        return courseService.updateCourse(courseRequest,courseId);
 
@@ -53,13 +55,10 @@ public class CourseController {
     }
 
     //delete course by course ID
-    @Modifying
-    @Transactional
-    @GetMapping("delete/del/{courseId}")
+    @DeleteMapping("delete/{courseId}")
     public String deleteByCourseId1(@PathVariable String courseId){
         return courseService.deleteCourse(courseId);
     }
-
 
 }
 

@@ -1,10 +1,12 @@
 package com.DevCollege.Controller;
 
 import com.DevCollege.DTO.StudentRequest;
+import com.DevCollege.DTO.StudentResponse;
 import com.DevCollege.Entity.Student;
 import com.DevCollege.Repository.StudentRepository;
-import com.DevCollege.Service.StudentService;
+import com.DevCollege.ServiceImpl.StudentServiceImpl;
 import com.DevCollege.exception.UserNotFoundException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +20,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/student")
 public class StudentController {
+
+    @Autowired
+    private ModelMapper modelMapper;
     @Autowired
     private StudentRepository studentRepository;
     @Autowired
-    private StudentService studentService;
+    private StudentServiceImpl studentService;
+
+
 
     @GetMapping("/getAll")
     public List<Student> findAllStudents() {
@@ -31,13 +38,13 @@ public class StudentController {
     //add student details
     @PostMapping("/addStudent")
     public Map<String,String> saveStudent(@Valid @RequestBody StudentRequest studentRequest){
-        return studentService.addStudent(studentRequest);
-
+        Student student = modelMapper.map(studentRequest, Student.class);
+        return studentService.addStudent(student);
     }
 
     //get student by student ID
     @GetMapping("/get/{studentId}")
-    public ResponseEntity<Student> findByCourseId(@PathVariable String studentId) throws UserNotFoundException {
+    public ResponseEntity<Student> findByStudentId(@PathVariable String studentId) throws UserNotFoundException {
         Student student = studentRepository.findById(studentId).orElseThrow(() ->
                 new UserNotFoundException("student ID not found with id :" + studentId));
         return ResponseEntity.ok(student);
@@ -46,8 +53,8 @@ public class StudentController {
     //delete student by student ID
     @Modifying
     @Transactional
-    @GetMapping("delete/del/{studentId}")
-    public String deleteByCourseId1(@PathVariable String studentId){
+    @GetMapping("delete/{studentId}")
+    public String deleteByStudentId(@PathVariable String studentId){
         return studentService.deleteStudent(studentId);
     }
 
@@ -55,8 +62,16 @@ public class StudentController {
     @PostMapping("/studentWallet/{studentId}")
     public Map<String,String> addStudentWallet(@RequestBody StudentRequest studentRequest,@PathVariable String studentId) throws UserNotFoundException {
         return studentService.addStudentWallet(studentRequest,studentId);
-
-
     }
 
+    @GetMapping("/studentWallet/{studentId}")
+    public StudentResponse getStudentWallet(@PathVariable String studentId) throws UserNotFoundException {
+        return studentService.getWallet(studentId);
+    }
+
+    @PutMapping("/studentUpdate/{studentId}")
+    public Map<String, String> updateStudentByStudentId(@RequestBody StudentRequest studentRequest, @PathVariable String studentId) throws UserNotFoundException {
+        return studentService.updateStudent(studentRequest,studentId);
+
+    }
 }
