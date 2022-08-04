@@ -7,7 +7,9 @@ import com.DevCollege.Entity.Enrolment;
 import com.DevCollege.Entity.Student;
 import com.DevCollege.exception.UserNotFoundException;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public interface EnrolmentService {
 
@@ -19,8 +21,6 @@ public interface EnrolmentService {
 
     public String checkAvailability(String courseId) throws  UserNotFoundException;
 
-    Enrolment enrolmentCourseId(String courseId) throws UserNotFoundException;
-
     Enrolment findByEnrolmentId(String enrolmentId) throws UserNotFoundException;
 
     String changeStatus(EnrolmentRequest enrolmentRequest, String enrolmentId) throws UserNotFoundException;
@@ -30,4 +30,6 @@ public interface EnrolmentService {
     List<?> getAllEnrolmentDetails() throws UserNotFoundException;
 
     List<?> getAllEnrolmentDetailsByStudentId(String studentId) throws UserNotFoundException;
+
+    Map<String,String> getCourseSuggestion(String StudentId) throws  UserNotFoundException;
 }

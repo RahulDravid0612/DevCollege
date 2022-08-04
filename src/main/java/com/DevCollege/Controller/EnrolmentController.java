@@ -10,7 +10,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/enrolment")
@@ -24,7 +26,7 @@ public class EnrolmentController {
 
     @Autowired
     private EnrolmentService enrolmentService;
-    @PostMapping("/addEnrolment")
+    @PostMapping("/add")
     public String saveEnrolment(@RequestBody EnrolmentRequest enrolmentRequest) throws UserNotFoundException {
         Enrolment enrolment = modelMapper.map(enrolmentRequest, Enrolment.class);
         return enrolmentService.addEnrolment(enrolment);
@@ -35,7 +37,7 @@ public class EnrolmentController {
         return enrolmentService.getAllEnrolmentDetails();
     }
 
-    @GetMapping("/getAllByStudentId/{studentId}")
+    @GetMapping("/getStudent/{studentId}")
     public  List<?> findAllEnrolmentByStudentId(@PathVariable String studentId) throws UserNotFoundException {
         return enrolmentService.getAllEnrolmentDetailsByStudentId(studentId);
     }
@@ -45,24 +47,19 @@ public class EnrolmentController {
         return enrolmentService.getEnrolmentDetails(enrolmentId);
     }
 
-    @GetMapping("/getByStudent/{studentId}")
-    public Enrolment findByStudentId(@PathVariable String studentId) throws UserNotFoundException {
-        Enrolment enrolment = enrolmentRepository.getStudentByEmailIdNative(studentId);
-        if(enrolment!=null){
-            return enrolment;
-        }else {
-            throw new UserNotFoundException(" studentID not found with studentId:"+studentId);
-        }
-    }
 
-    @GetMapping("/checkAvailability/{courseId}")
+    @GetMapping("/availability/{courseId}")
     public String availability(@PathVariable String courseId)  throws UserNotFoundException{
         return enrolmentService.checkAvailability(courseId);
     }
 
-    @PostMapping("/changeStatus/{enrolmentId}")
+    @PostMapping("/status/{enrolmentId}")
     public String changeStatus(@RequestBody EnrolmentRequest enrolmentRequest,@PathVariable String enrolmentId) throws UserNotFoundException {
         return enrolmentService.changeStatus(enrolmentRequest,enrolmentId);
     }
 
+    @GetMapping("/suggestion/{studentId}")
+    public Map<String, String> courseSuggestion(@PathVariable String studentId) throws UserNotFoundException {
+        return enrolmentService.getCourseSuggestion(studentId);
+    }
 }

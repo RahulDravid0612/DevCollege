@@ -3,11 +3,10 @@ package com.DevCollege.Controller;
 import com.DevCollege.DTO.CourseRequest;
 import com.DevCollege.Entity.Course;
 import com.DevCollege.Repository.CourseRepository;
-import com.DevCollege.ServiceImpl.CourseServiceImpl;
+import com.DevCollege.Service.CourseService;
 import com.DevCollege.exception.UserNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,12 +22,12 @@ public class CourseController {
     @Autowired
     private CourseRepository courseRepository;
     @Autowired
-    private CourseServiceImpl courseService;
+    private CourseService courseService;
 
     //Get All course List
     @GetMapping("/getAll")
-    public List<Course> findAllStudents() {
-        return courseRepository.findAll();
+    public List<CourseRequest> findAllStudents() {
+        return courseService.findCourse();
     }
 
     //Add course By course ID
@@ -40,23 +39,21 @@ public class CourseController {
 
 
     //update course by course ID
-    @PutMapping("/courseUpdate/{courseId}")
-    public Map<String, String> updateCourseByCourseId(@RequestBody CourseRequest courseRequest, @PathVariable String courseId) throws UserNotFoundException {
+    @PutMapping("/updateCourse/{courseId}")
+    public Map<String, String> updateCourseByCourseId(@Valid @RequestBody CourseRequest courseRequest, @PathVariable String courseId) throws UserNotFoundException {
        return courseService.updateCourse(courseRequest,courseId);
 
     }
 
     //get course by course ID
     @GetMapping("/get/{courseId}")
-    public ResponseEntity<Course> findByCourseId(@PathVariable String courseId) throws UserNotFoundException {
-        Course course = courseRepository.findById(courseId).orElseThrow(() ->
-                new UserNotFoundException("course ID not found with id :" + courseId));
-        return ResponseEntity.ok(course);
+    public CourseRequest findByCourseId(@PathVariable String courseId) throws UserNotFoundException {
+        return courseService.findByCourse(courseId) ;
     }
 
     //delete course by course ID
-    @DeleteMapping("delete/{courseId}")
-    public String deleteByCourseId1(@PathVariable String courseId){
+    @DeleteMapping("deleteCourse/{courseId}")
+    public String deleteByCourseId1(@PathVariable String courseId) throws UserNotFoundException {
         return courseService.deleteCourse(courseId);
     }
 

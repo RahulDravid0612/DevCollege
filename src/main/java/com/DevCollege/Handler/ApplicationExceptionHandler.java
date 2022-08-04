@@ -1,7 +1,9 @@
 package com.DevCollege.Handler;
 
 import com.DevCollege.exception.UserNotFoundException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -31,5 +33,18 @@ public class ApplicationExceptionHandler {
         errorMap.put("errorMessage", ex.getMessage());
         return errorMap;
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public Map<String, String> handle(HttpMessageNotReadableException ex){
+       Throwable cause =ex.getCause();
+        Map<String, String> errorMap = new HashMap<>();
+        if (cause instanceof MismatchedInputException){
+            MismatchedInputException mismatchedInputException=(MismatchedInputException) cause;
+            errorMap.put("invalid input for ",mismatchedInputException.getPath().get(0).getFieldName());
+        }
+        return errorMap;
+    }
+
 
 }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.sql.Date;
 
 @Data
-@AllArgsConstructor(staticName = "build")
+@AllArgsConstructor
 @NoArgsConstructor
 public class EnrolmentRequest {
 

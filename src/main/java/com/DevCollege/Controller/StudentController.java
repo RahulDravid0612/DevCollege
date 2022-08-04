@@ -1,6 +1,8 @@
 package com.DevCollege.Controller;
 
 import com.DevCollege.DTO.StudentRequest;
+import com.DevCollege.DTO.StudentRequest1;
+import com.DevCollege.DTO.StudentRequestUpdate;
 import com.DevCollege.DTO.StudentResponse;
 import com.DevCollege.Entity.Student;
 import com.DevCollege.Repository.StudentRepository;
@@ -9,7 +11,6 @@ import com.DevCollege.exception.UserNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +32,8 @@ public class StudentController {
 
 
     @GetMapping("/getAll")
-    public List<Student> findAllStudents() {
-        return studentRepository.findAll();
+    public List<StudentRequest> findAllStudents() {
+        return studentService.findStudent();
     }
 
     //add student details
@@ -44,24 +45,22 @@ public class StudentController {
 
     //get student by student ID
     @GetMapping("/get/{studentId}")
-    public ResponseEntity<Student> findByStudentId(@PathVariable String studentId) throws UserNotFoundException {
-        Student student = studentRepository.findById(studentId).orElseThrow(() ->
-                new UserNotFoundException("student ID not found with id :" + studentId));
-        return ResponseEntity.ok(student);
+    public StudentRequest findByStudentId(@PathVariable String studentId) throws UserNotFoundException {
+        return studentService.findByStudent(studentId);
     }
 
     //delete student by student ID
     @Modifying
     @Transactional
-    @GetMapping("delete/{studentId}")
-    public String deleteByStudentId(@PathVariable String studentId){
+    @DeleteMapping("deleteStudent/{studentId}")
+    public String deleteByStudentId(@PathVariable String studentId) throws UserNotFoundException {
         return studentService.deleteStudent(studentId);
     }
 
     //Add wallet by student ID
     @PostMapping("/studentWallet/{studentId}")
-    public Map<String,String> addStudentWallet(@RequestBody StudentRequest studentRequest,@PathVariable String studentId) throws UserNotFoundException {
-        return studentService.addStudentWallet(studentRequest,studentId);
+    public Map<String,String> addStudentWallet(@Valid @RequestBody StudentRequest1 studentRequest1, @PathVariable String studentId) throws UserNotFoundException {
+        return studentService.addStudentWallet(studentRequest1,studentId);
     }
 
     @GetMapping("/studentWallet/{studentId}")
@@ -69,9 +68,9 @@ public class StudentController {
         return studentService.getWallet(studentId);
     }
 
-    @PutMapping("/studentUpdate/{studentId}")
-    public Map<String, String> updateStudentByStudentId(@RequestBody StudentRequest studentRequest, @PathVariable String studentId) throws UserNotFoundException {
-        return studentService.updateStudent(studentRequest,studentId);
+    @PutMapping("/updateStudent/{studentId}")
+    public Map<String, String> updateStudentByStudentId(@Valid @RequestBody StudentRequestUpdate studentRequestUpdate, @PathVariable String studentId) throws UserNotFoundException {
+        return studentService.updateStudent(studentRequestUpdate,studentId);
 
     }
 }

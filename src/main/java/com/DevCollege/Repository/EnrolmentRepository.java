@@ -10,7 +10,7 @@ public interface EnrolmentRepository extends JpaRepository<Enrolment,String> {
             value = "SELECT * FROM enrolment s where student_id=?1",
             nativeQuery = true
     )
-    Enrolment getStudentByEmailIdNative(String emailId);
+    Enrolment getStudent(String emailId);
 
     @Query(
             value = "SELECT * FROM enrolment s where course_id=?1",

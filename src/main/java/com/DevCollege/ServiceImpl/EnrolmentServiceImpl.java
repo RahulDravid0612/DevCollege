@@ -13,10 +13,7 @@ import com.DevCollege.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class EnrolmentServiceImpl implements EnrolmentService {
@@ -43,29 +40,37 @@ public class EnrolmentServiceImpl implements EnrolmentService {
         return courseRepository.findById(courseId).orElseThrow(() ->
                 new UserNotFoundException("course ID not found with id :" + courseId));
     }
-    
+
+    public List<Enrolment> findAll(){
+        return enrolmentRepository.findAll();
+    }
     @Override
     public String addEnrolment(Enrolment enrolment) throws UserNotFoundException {
-
+        Boolean flag=false;
         Student student = findByStudentId(enrolment.getStudent_id());
         Course course = findByCourseId(enrolment.getCourse_id());
-        if (course.getCourseId()!=null) {
-            int duration = course.getCourseDuration();
-            cal.setTime(enrolment.getCourseStart());
-            cal.add(Calendar.MINUTE, duration);
-            float c=course.getCourseFee();
-            float s=student.getWallet();
-            Date year = cal.getTime();
-            enrolment.setCourseEnd(year);
-            if (course.getNoOfSlot() >= 0) {
+        List<Enrolment> enrolmentList=findAll();
+        for(Enrolment enrolment1:enrolmentList) {
+            if (enrolment.getStudent_id().equals(enrolment1.getStudent_id())){
+                if (enrolment.getCourse_id().equals(enrolment1.getCourse_id()))
+                flag=true;
+            }
+        }
+        if(flag==false) {
+            if (course.getCourseId() != null) {
+                int duration = course.getCourseDuration();
+                cal.setTime(enrolment.getCourseStart());
+                cal.add(Calendar.MINUTE, duration);
+                Date year = cal.getTime();
+                enrolment.setCourseEnd(year);
+                if (course.getNoOfSlot() >= 0) {
                     if (student.getWallet() >= course.getCourseFee()) {
                         student.setWallet(student.getWallet() - course.getCourseFee());
                         enrolment.setStatus("Allocated");
                         course.setNoOfSlot(course.getNoOfSlot() - 1);
                         enrolmentRepository.save(enrolment);
-                        String str = "Successfully Enrolled for  " + student.getStudentName() + " in course "
+                        return "Successfully Enrolled for  " + student.getStudentName() + " in course "
                                 + course.getCourseName() + " for enrolment id " + enrolment.getEnrolmentId();
-                        return str;
                     } else {
                         return "your Wallet Amount is Running Low";
                     }
@@ -75,30 +80,17 @@ public class EnrolmentServiceImpl implements EnrolmentService {
             } else {
                 return null;
             }
+        }
+        return "Student Already Enrolled to this course";
     }
 
     @Override
     public String checkAvailability(String courseId) throws UserNotFoundException {
-        Enrolment enrolment1=enrolmentCourseId(courseId);
-        Course course=findByCourseId(enrolment1.getCourse_id());
+        Course course=findByCourseId(courseId);
         if (course.getNoOfSlot()>0){
-        if (enrolment1.getCourse_id().equals("Cancelled")||enrolment1.getCourse_id().equals("Completed")){
-                return "course is available for enrolment";
-            }
         return "course is available for enrolment";
         }
         return " course is not available for enrolment";
-    }
-
-
-    @Override
-    public Enrolment enrolmentCourseId(String courseId) throws UserNotFoundException {
-        Enrolment enrolment = enrolmentRepository.checkAvailability(courseId);
-        if(enrolment!=null){
-            return enrolment;
-        }else {
-            throw new UserNotFoundException(" courseId not found :"+courseId);
-        }
     }
 
     @Override
@@ -110,30 +102,44 @@ public class EnrolmentServiceImpl implements EnrolmentService {
     @Override
     public String changeStatus(EnrolmentRequest enrolmentRequest,String enrolmentId) throws UserNotFoundException {
         Enrolment enrolment = findByEnrolmentId(enrolmentId);
-        Student student=findByStudentId(enrolment.getStudent_id());
-        Course course=findByCourseId(enrolment.getCourse_id());
-        if (enrolment.getStatus().equals("Allocated")) {
+        Student student = findByStudentId(enrolment.getStudent_id());
+        Course course = findByCourseId(enrolment.getCourse_id());
+        if (enrolment.getStatus().equals(enrolmentRequest.getStatus())){
+            return "Status Already in"+enrolmentRequest.getStatus()+"Status";
+        }
+        if (enrolment.getStatus().equals("Cancelled")) {
             enrolment.setStatus(enrolmentRequest.getStatus());
-            Date startDate=enrolment.getCourseStart();
-            Date nowDate=new Date();
+            enrolmentRepository.save(enrolment);
+            return "Successfully change the status to "
+                    + enrolmentRequest.getStatus() + " for enrol id " + enrolmentId;
+        }
+        if (enrolment.getStatus().equals("Allocated")||enrolment.getStatus().equals("Inprogress")) {
+            enrolment.setStatus(enrolmentRequest.getStatus());
+            Date startDate = enrolment.getCourseStart();
+            Date nowDate = new Date();
             long diff = nowDate.getTime() - startDate.getTime();
-            if(diff<=2){
-                student.setWallet(course.getCourseFee()+course.getCourseFee());
+            if (diff <= 2) {
+                student.setWallet(course.getCourseFee() + course.getCourseFee());
                 enrolmentRepository.save(enrolment);
-                return "Successfully change the status from " + enrolment.getStatus() + " to "
+                return "Successfully change the status to "
                         + enrolmentRequest.getStatus() + " for enrol id " + enrolmentId;
-            } else if(diff==1) {
-                student.setWallet((float) (course.getCourseFee()+(course.getCourseFee()/1.42)));
-                return "Successfully change the status from " + enrolment.getStatus() + " to "
+            } else if (diff == 1) {
+                student.setWallet((float) (course.getCourseFee() + (course.getCourseFee() / 1.42)));
+                enrolmentRepository.save(enrolment);
+                return "Successfully change the status to "
                         + enrolmentRequest.getStatus() + " for enrol id " + enrolmentId;
-            } else if (diff<1) {
-                student.setWallet((course.getCourseFee()+(course.getCourseFee()/2)));
-                return "Successfully change the status from " + enrolment.getStatus() + " to "
+            } else if (diff < 1) {
+                student.setWallet((course.getCourseFee() + (course.getCourseFee() / 2)));
+                enrolmentRepository.save(enrolment);
+                return "Successfully change the status to "
+                        + enrolmentRequest.getStatus() + " for enrol id " + enrolmentId;
+            } else {
+                enrolmentRepository.save(enrolment);
+                return "Successfully change the status to "
                         + enrolmentRequest.getStatus() + " for enrol id " + enrolmentId;
             }
-
         }
-        return "Status is Already Cancelled";
+        return "Time Out";
     }
 
     @Override
@@ -152,8 +158,6 @@ public class EnrolmentServiceImpl implements EnrolmentService {
         enrolmentResponse.setStatus(enrolment.getStatus());
         enrolmentResponse.setCourseLink("http://localhost:8080/api/course/get/"+enrolment.getCourse_id());
         enrolmentResponse.setStudentLink("http://localhost:8080/api/enrolment/getByStudent/"+enrolment.getStudent_id());
-
-
         return enrolmentResponse;
     }
 
@@ -182,4 +186,18 @@ public class EnrolmentServiceImpl implements EnrolmentService {
         return enrolmentResponseList;
     }
 
+    @Override
+    public Map<String, String> getCourseSuggestion(String studentId) throws UserNotFoundException {
+       Student student=findByStudentId(studentId);
+       String qualification=student.getQualification();
+       List<Course> courseList=courseRepository.findAll();
+       Map<String,String> courses=new HashMap<>();
+        for (Course course:courseList) {
+            String[] currentQualification = course.getCourseTag().split(",");
+            if(Arrays.asList(currentQualification).contains(qualification)){
+                courses.put(course.getCourseId(),course.getCourseName());
+            }
+        }
+        return courses;
+    }
 }
