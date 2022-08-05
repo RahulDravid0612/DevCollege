@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class ApplicationExceptionHandler {
+public class  ApplicationExceptionHandler {
 
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -45,6 +45,4 @@ public class ApplicationExceptionHandler {
         }
         return errorMap;
     }
-
-
 }

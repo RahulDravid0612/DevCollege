@@ -45,8 +45,9 @@ public class CourseServiceImpl implements CourseService {
         return courseRequest;
     }
     @Override
-    public Map<String, String> addCourse(Course course){
+    public Map<String, String> addCourse(CourseRequest courseRequest){
         Map<String, String> msg = new HashMap<>();
+        Course course = modelMapper.map(courseRequest, Course.class);
         courseRepository.save(course);
         msg.put("Successfully Added Course details ", course.getCourseId());
        return msg;

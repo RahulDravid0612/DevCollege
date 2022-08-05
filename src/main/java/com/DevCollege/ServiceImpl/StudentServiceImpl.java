@@ -83,6 +83,7 @@ public class StudentServiceImpl implements StudentService {
             }
         }
         if(flag==false){
+
             studentRepository.deleteById(studentId);
             return  "Successfully deleted Student details with  " +studentId+
                     "  And amount  "+ sum/2 + "  will be refunded in original payment method within 24 hours.";

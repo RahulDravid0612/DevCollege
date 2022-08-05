@@ -12,11 +12,11 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 public class StudentRequestUpdate {
     private String studentId;
-    @NotNull(message = "description shouldn't be null")
+    @NotNull(message = "studentName shouldn't be null")
     private String studentName;
-    @NotNull(message = "description shouldn't be null")
+    @NotNull(message = "qualification shouldn't be null")
     private String qualification;
-    @NotNull(message = "description shouldn't be null")
+    @NotNull(message = "studentContact shouldn't be null")
     @Pattern(regexp = "^\\d{10}$",message = "Contact number must be 10-digit numeric  ")
     private String studentContact;
     private float wallet;

@@ -56,6 +56,7 @@ public class EnrolmentServiceImpl implements EnrolmentService {
                 flag=true;
             }
         }
+
         if(flag==false) {
             if (course.getCourseId() != null) {
                 int duration = course.getCourseDuration();
@@ -63,7 +64,7 @@ public class EnrolmentServiceImpl implements EnrolmentService {
                 cal.add(Calendar.MINUTE, duration);
                 Date year = cal.getTime();
                 enrolment.setCourseEnd(year);
-                if (course.getNoOfSlot() >= 0) {
+                if (course.getNoOfSlot() > 0) {
                     if (student.getWallet() >= course.getCourseFee()) {
                         student.setWallet(student.getWallet() - course.getCourseFee());
                         enrolment.setStatus("Allocated");
@@ -105,16 +106,24 @@ public class EnrolmentServiceImpl implements EnrolmentService {
         Student student = findByStudentId(enrolment.getStudent_id());
         Course course = findByCourseId(enrolment.getCourse_id());
         if (enrolment.getStatus().equals(enrolmentRequest.getStatus())){
-            return "Status Already in"+enrolmentRequest.getStatus()+"Status";
+            return "Status Already in "+enrolmentRequest.getStatus()+" Status ";
         }
         if (enrolment.getStatus().equals("Cancelled")) {
             enrolment.setStatus(enrolmentRequest.getStatus());
+            course.setNoOfSlot(course.getNoOfSlot()+1);
+            student.setWallet(student.getWallet() + course.getCourseFee());
+            studentRepository.save(student);
+            courseRepository.save(course);
             enrolmentRepository.save(enrolment);
             return "Successfully change the status to "
                     + enrolmentRequest.getStatus() + " for enrol id " + enrolmentId;
         }
         if (enrolment.getStatus().equals("Allocated")||enrolment.getStatus().equals("Inprogress")) {
             enrolment.setStatus(enrolmentRequest.getStatus());
+            course.setNoOfSlot(course.getNoOfSlot()-1);
+            student.setWallet(student.getWallet() - course.getCourseFee());
+            studentRepository.save(student);
+            courseRepository.save(course);
             Date startDate = enrolment.getCourseStart();
             Date nowDate = new Date();
             long diff = nowDate.getTime() - startDate.getTime();

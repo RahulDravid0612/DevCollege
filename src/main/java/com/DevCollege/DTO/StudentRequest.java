@@ -15,9 +15,9 @@ import javax.validation.constraints.Positive;
 public class StudentRequest {
 
     private String studentId;
-    @NotNull(message = "description shouldn't be null")
+    @NotNull(message = "studentName shouldn't be null")
     private String studentName;
-    @NotNull(message = "description shouldn't be null")
+    @NotNull(message = "qualification shouldn't be null")
     private String qualification;
     @NotNull(message = "description shouldn't be null")
     @Pattern(regexp = "^\\d{10}$",message = "Contact number must be 10-digit numeric  ")

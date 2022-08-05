@@ -10,7 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -26,11 +26,15 @@ public class EnrolmentController {
 
     @Autowired
     private EnrolmentService enrolmentService;
+
+    //Add Enrolment
     @PostMapping("/add")
-    public String saveEnrolment(@RequestBody EnrolmentRequest enrolmentRequest) throws UserNotFoundException {
+    public String saveEnrolment(@Valid @RequestBody EnrolmentRequest enrolmentRequest) throws UserNotFoundException {
         Enrolment enrolment = modelMapper.map(enrolmentRequest, Enrolment.class);
         return enrolmentService.addEnrolment(enrolment);
     }
+
+    //
 
     @GetMapping("/getAll")
     public List<?> findAllEnrolment() throws UserNotFoundException {

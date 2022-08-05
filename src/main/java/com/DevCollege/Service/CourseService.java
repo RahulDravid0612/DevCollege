@@ -14,7 +14,7 @@ public interface CourseService {
 
     CourseRequest findByCourse(String courseId) throws UserNotFoundException;
 
-    public Map<String, String> addCourse(Course course);
+    public Map<String, String> addCourse(CourseRequest courseRequest);
 
     public String deleteCourse(String courseId) throws UserNotFoundException;
 

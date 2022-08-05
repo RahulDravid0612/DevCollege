@@ -30,11 +30,10 @@ public class CourseController {
         return courseService.findCourse();
     }
 
-    //Add course By course ID
+    //Add course
     @PostMapping("/addCourse")
     public Map<String, String> saveCourse(@Valid @RequestBody CourseRequest courseRequest){
-        Course course = modelMapper.map(courseRequest, Course.class);
-        return courseService.addCourse(course);
+        return courseService.addCourse(courseRequest);
     }
 
 
