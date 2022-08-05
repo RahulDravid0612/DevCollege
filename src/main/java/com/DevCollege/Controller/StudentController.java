@@ -39,8 +39,7 @@ public class StudentController {
     //add student details
     @PostMapping("/addStudent")
     public Map<String,String> saveStudent(@Valid @RequestBody StudentRequest studentRequest){
-        Student student = modelMapper.map(studentRequest, Student.class);
-        return studentService.addStudent(student);
+        return studentService.addStudent(studentRequest);
     }
 
     //get student by student ID

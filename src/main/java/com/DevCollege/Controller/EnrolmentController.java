@@ -30,8 +30,7 @@ public class EnrolmentController {
     //Add Enrolment
     @PostMapping("/add")
     public String saveEnrolment(@Valid @RequestBody EnrolmentRequest enrolmentRequest) throws UserNotFoundException {
-        Enrolment enrolment = modelMapper.map(enrolmentRequest, Enrolment.class);
-        return enrolmentService.addEnrolment(enrolment);
+        return enrolmentService.addEnrolment(enrolmentRequest);
     }
 
     //

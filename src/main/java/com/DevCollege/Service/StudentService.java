@@ -13,7 +13,7 @@ public interface StudentService {
 
     StudentRequest findByStudent(String studentId) throws UserNotFoundException;
 
-    public Map<String, String> addStudent(Student student);
+    public Map<String, String> addStudent(StudentRequest studentRequest);
 
     Course findByCourseId(String courseId) throws  UserNotFoundException;
 

@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Data
-@AllArgsConstructor(staticName = "build")
+@AllArgsConstructor
 @NoArgsConstructor
 public class Course {
 

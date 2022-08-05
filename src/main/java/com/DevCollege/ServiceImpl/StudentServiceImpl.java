@@ -54,7 +54,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Map<String, String> addStudent(Student student){
+    public Map<String, String> addStudent(StudentRequest studentRequest){
+        Student student = modelMapper.map(studentRequest, Student.class);
         studentRepository.save(student);
         Map<String, String> msg = new HashMap<>();
         msg.put("Successfully Added Student details ", student.getStudentId());

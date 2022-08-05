@@ -1,5 +1,6 @@
 package com.DevCollege.DTO;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ public class EnrolmentRequest {
     @NotNull(message = "course_id shouldn't be null")
     private String course_id;
     @NotNull(message = "courseStart Date is Required")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @FutureOrPresent(message = "The Date must be today or in the future")
     private Date courseStart;
     private  String status;

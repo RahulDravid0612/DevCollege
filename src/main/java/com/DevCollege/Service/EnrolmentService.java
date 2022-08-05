@@ -7,7 +7,6 @@ import com.DevCollege.Entity.Enrolment;
 import com.DevCollege.Entity.Student;
 import com.DevCollege.exception.UserNotFoundException;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +16,7 @@ public interface EnrolmentService {
 
     public Student findByStudentId(String studentId) throws UserNotFoundException;
 
-    public String addEnrolment(Enrolment enrolment) throws UserNotFoundException;
+    public String addEnrolment(EnrolmentRequest enrolmentRequest) throws UserNotFoundException;
 
     public String checkAvailability(String courseId) throws  UserNotFoundException;
 

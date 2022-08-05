@@ -10,6 +10,7 @@ import com.DevCollege.Repository.EnrolmentRepository;
 import com.DevCollege.Repository.StudentRepository;
 import com.DevCollege.Service.EnrolmentService;
 import com.DevCollege.exception.UserNotFoundException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,9 @@ import java.util.*;
 public class EnrolmentServiceImpl implements EnrolmentService {
 
     Calendar cal=Calendar.getInstance();
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Autowired
     private EnrolmentRepository enrolmentRepository;
@@ -45,7 +49,8 @@ public class EnrolmentServiceImpl implements EnrolmentService {
         return enrolmentRepository.findAll();
     }
     @Override
-    public String addEnrolment(Enrolment enrolment) throws UserNotFoundException {
+    public String addEnrolment(EnrolmentRequest enrolmentRequest) throws UserNotFoundException {
+        Enrolment enrolment = modelMapper.map(enrolmentRequest, Enrolment.class);
         Boolean flag=false;
         Student student = findByStudentId(enrolment.getStudent_id());
         Course course = findByCourseId(enrolment.getCourse_id());
@@ -56,7 +61,7 @@ public class EnrolmentServiceImpl implements EnrolmentService {
                 flag=true;
             }
         }
-
+        System.out.println();
         if(flag==false) {
             if (course.getCourseId() != null) {
                 int duration = course.getCourseDuration();
@@ -111,7 +116,8 @@ public class EnrolmentServiceImpl implements EnrolmentService {
         if (enrolment.getStatus().equals("Cancelled")) {
             enrolment.setStatus(enrolmentRequest.getStatus());
             course.setNoOfSlot(course.getNoOfSlot()+1);
-            student.setWallet(student.getWallet() + course.getCourseFee());
+            float sum=student.getWallet()+course.getCourseFee();
+            student.setWallet(sum);
             studentRepository.save(student);
             courseRepository.save(course);
             enrolmentRepository.save(enrolment);

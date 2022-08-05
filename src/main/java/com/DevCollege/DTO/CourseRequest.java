@@ -19,7 +19,7 @@ public class CourseRequest {
     private String description;
     @Min(value = 1)
     private int noOfSlot;
-    @Min(value = 1)
+    @Min(value = 0)
     private float courseFee;
     @Positive(message = "courseDuration shouldn't be null")
     private int courseDuration;
